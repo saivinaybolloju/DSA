@@ -1,0 +1,87 @@
+import java.util.*;
+
+public class FindDisappearedNumbers {
+
+    // Approach 1: Brute Force
+  //---------------------------------------------------------------------
+    public List<Integer> bruteForce(int[] nums) {
+        ArrayList<Integer> ar = new ArrayList<>();
+        for (int i = 1; i <= nums.length; i++) {
+            boolean flag = true;
+            for (int j = 0; j < nums.length; j++) {
+                if (i == nums[j]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                ar.add(i);
+            }
+        }
+        return ar;
+    }
+//---------------------------------------------------------------------------------
+    // Approach 2: Binary Search
+    public boolean BS(int[] arr, int low, int high, int k) {
+        if (low > high) return false;
+        int mid = (low + high) / 2;
+        if (arr[mid] == k) return true;
+        return (arr[mid] > k) ? BS(arr, low, mid - 1, k) : BS(arr, mid + 1, high, k);
+    }
+
+    public List<Integer> binarySearch(int[] nums) {
+        Arrays.sort(nums);
+        ArrayList<Integer> ar = new ArrayList<>();
+        for (int i = 1; i <= nums.length; i++) {
+            if (!BS(nums, 0, nums.length - 1, i)) {
+                ar.add(i);
+            }
+        }
+        return ar;
+    }
+//------------------------------------------------------------------------------
+    // Approach 3: Cyclic Sort
+    public List<Integer> cyclicSort(int[] nums) {
+        ArrayList<Integer> ar = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            while (nums[nums[i] - 1] != nums[i]) {
+                int temp = nums[i];
+                nums[i] = nums[temp - 1];
+                nums[temp - 1] = temp;
+            }
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != i + 1) {
+                ar.add(i + 1);
+            }
+        }
+        return ar;
+    }
+//-----------------------------------------------------------------------
+    // Approach 4: Mark Negative
+    public List<Integer> markNegative(int[] nums) {
+        ArrayList<Integer> ar = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[Math.abs(nums[i]) - 1] > 0)
+                nums[Math.abs(nums[i]) - 1] = -nums[Math.abs(nums[i]) - 1];
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > 0) {
+                ar.add(i + 1);
+            }
+        }
+        return ar;
+    }
+//----------------------------------------------------------------------------------------
+    // Main method to test all approaches
+    public static void main(String[] args) {
+        int[] input = {4, 3, 2, 7, 8, 2, 3, 1};
+
+        FindDisappearedNumbers obj = new FindDisappearedNumbers();
+
+        System.out.println("Brute Force: " + obj.bruteForce(input.clone()));
+        System.out.println("Binary Search: " + obj.binarySearch(input.clone()));
+        System.out.println("Cyclic Sort: " + obj.cyclicSort(input.clone()));
+        System.out.println("Mark Negative: " + obj.markNegative(input.clone()));
+    }
+}
